@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Marina.Model
 {
     /// <summary>
     /// The abstract base-class for all types of boats seeking mooring.
     /// </summary>
-    public abstract class Boat
+    public abstract class Boat : IComparable<Boat>
     {
         private static readonly Random rng = new Random();
 
@@ -100,5 +101,9 @@ namespace Marina.Model
 
             return arg;
         }
+
+        /// <inheritdoc />
+        public int CompareTo(Boat other) =>
+            string.Compare(IdentityCode, other.IdentityCode, StringComparison.OrdinalIgnoreCase);
     }
 }

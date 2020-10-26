@@ -12,70 +12,72 @@ namespace Marina.Model
         /// <param name="boat">The boat seeking berth</param>
         /// <param name="freeBerths">An array for all spots where occupied spots are marked with <see langword="false"/>.</param>
         /// <returns>The index for the best berth, or a negative value if none is found.</returns>
-        public delegate int BerthingAlgorithm(Boat boat, bool[] freeBerths);
-        private readonly IBerth[] berthSpots;
+        public delegate int BerthingAlgorithm(Boat boat, IBerth[] berths);
+        private readonly IBerth[] berths;
         private BerthingAlgorithm berthingAlgorithm;
-        public int Size => berthSpots.Length;
+        public int Size => berths.Length;
 
         public Dock(int size, BerthingAlgorithm algorithm)
         {
-            berthSpots = new IBerth[size];
+            berths = new IBerth[size];
             berthingAlgorithm = algorithm;
         }
 
         public void SetBerthingAlgorithm(BerthingAlgorithm algorithm) => berthingAlgorithm = algorithm;
 
+        public bool TryAdd(Boat boat) => TryAdd(boat, berthingAlgorithm);
 
-        public bool Berth(Boat boat) => Berth(boat, berthingAlgorithm);
-
-        public bool Berth(Boat boat, BerthingAlgorithm algorithm)
+        public bool TryAdd(Boat boat, BerthingAlgorithm algorithm)
         {
-            var index = algorithm(boat, GetFreeSpots(boat.BerthSpace));
+            if (Boats.Contains(boat))
+                throw new ArgumentException("A boat with the same id is already berthed.", nameof(boat));
+
+            var index = algorithm(boat, berths);
 
             if (index < 0) return false;
-            Add(boat, index);
+            AddBoat(boat, index);
 
             return true;
         }
 
-        private void Add(Boat boat, int index)
+        private void AddBoat(Boat boat, int index)
         {
-            if (berthSpots[index] is null)
+            if (berths[index] is null)
             {
                 if (boat.BerthSpace < 1)
                 {
-                    berthSpots[index] = new SharedBerth(boat);
+                    berths[index] = new SharedBerth(boat);
                 }
                 else
                 {
                     var berth = new Berth(boat);
                     for (int offset = 0; offset < boat.BerthSpace; offset++)
                     {
-                        berthSpots[index + offset] = berth;
+                        berths[index + offset] = berth;
                     }
                 }
             }
             else
             {
-                berthSpots[index].AddBoat(boat);
+                berths[index].AddBoat(boat);
             }
         }
 
-        private bool[] GetFreeSpots(double berthSpace)
+        private static bool[] GetFreeBerths(double berthSpace, IBerth[] berths)
         {
-            var freeSpots = new bool[berthSpots.Length];
+            var freeSpots = new bool[berths.Length];
             if (berthSpace >= 1)
             {
-                for (int i = 0; i < berthSpots.Length; i++)
+                for (int i = 0; i < berths.Length; i++)
                 {
-                    freeSpots[i] = berthSpots[i] is null;
+                    freeSpots[i] = berths[i] is null;
                 }
             }
             else
             {
-                for (int i = 0; i < berthSpots.Length; i++)
+                for (int i = 0; i < berths.Length; i++)
                 {
-                    var spot = berthSpots[i];
+                    var spot = berths[i];
                     if (spot is null || spot.FreeSpace >= berthSpace)
                     {
                         freeSpots[i] = true;
@@ -85,5 +87,35 @@ namespace Marina.Model
 
             return freeSpots;
         }
+
+        public static BerthingAlgorithm DefaultBerthing => FirstFitAlgorithm;
+        private static int FirstFitAlgorithm(Boat boat, IBerth[] berths)
+        {
+            if (boat.BerthSpace < 1)
+            {
+                for (int i = 0; i < berths.Length; i++)
+                {
+                    bool free = berths[i]?.FreeSpace > boat.BerthSpace;
+
+                    if (free) return i;
+                }
+            }
+
+            var freeBerths = GetFreeBerths(boat.BerthSpace, berths);
+
+            for (int i = 0; i < berths.Length; i++)
+            {
+                if (freeBerths[i]) return i;
+            }
+
+            return -1;
+        }
+
+        public IEnumerable<IBerth> Berths =>
+            berths.Where(berth => berth != null)
+                      .GroupBy(berth => berth)
+                      .Select(group => group.First());
+
+        public IEnumerable<Boat> Boats => Berths.SelectMany(berth => berth.Occupancy.Select(item => item.boat));
     }
 }

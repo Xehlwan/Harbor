@@ -27,9 +27,12 @@ namespace Marina.Model
         }
 
         /// <inheritdoc />
-        public IEnumerable<(Boat boat, int berthTime)> GetBoats()
+        public IEnumerable<(Boat boat, int berthTime)> Occupancy
         {
-            yield return (boat, berthedFor);
+            get
+            {
+                yield return (boat, berthedFor);
+            }
         }
 
         /// <inheritdoc />

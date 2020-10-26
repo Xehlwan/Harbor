@@ -29,10 +29,7 @@ namespace Marina.Model
         }
 
         /// <inheritdoc />
-        public IEnumerable<(Boat boat, int berthTime)> GetBoats()
-        {
-            return spots.AsEnumerable();
-        }
+        public IEnumerable<(Boat boat, int berthTime)> Occupancy => spots.AsEnumerable();
 
         /// <inheritdoc />
         public void IncrementTime()
