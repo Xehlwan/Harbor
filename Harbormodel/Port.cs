@@ -12,6 +12,7 @@ namespace Harbor.Model
 
         public Port(params int[] dockSizes)
         {
+            Time = DateTime.Now;
             algorithm = DockChoiceEmptiest;
             if (dockSizes.Length >= 1)
             {
@@ -50,12 +51,16 @@ namespace Harbor.Model
         /// <inheritdoc />
         public IEnumerable<Boat> LeftToday => docks.SelectMany(dock => dock.LeftToday);
 
+        /// <inheritdoc />
+        public DateTime Time { get; private set; }
+
         public int Size { get; }
 
         /// <inheritdoc />
         public void IncrementTime()
         {
             foreach (Dock dock in Docks) dock.IncrementTime();
+            Time = Time.AddDays(1);
         }
 
         /// <summary>

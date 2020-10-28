@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Harbor.Model
 {
@@ -9,6 +10,7 @@ namespace Harbor.Model
         public int DockCount { get; }
         public IEnumerable<Dock> Docks { get; }
         public IEnumerable<Boat> LeftToday { get; }
+        public DateTime Time { get; }
         public int Size { get; }
         public void IncrementTime();
         public bool TryAdd(Boat boat);

@@ -8,7 +8,8 @@ namespace Harbor.ConsoleUI
     {
         private static void Main(string[] args)
         {
-            var port = new Port(32, 32);
+            IPort port = new Port(32, 32);
+            port = new PortLogger(port, "test.log", true);
 
             Print.Value(port.Size, "Marina Size");
             Print.Value(port.Boats.Count());
@@ -28,6 +29,16 @@ namespace Harbor.ConsoleUI
             {
                 WriteLine($"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
             }
+
+            port.TryRemove(boat);
+            foreach (Boat b in port.Boats)
+            {
+                WriteLine($"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
+            }
+            port.IncrementTime();
+            port.IncrementTime();
+            port.IncrementTime();
+            port.IncrementTime();
             
 
         }
