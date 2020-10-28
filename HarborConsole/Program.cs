@@ -8,23 +8,23 @@ namespace Harbor.ConsoleUI
     {
         private static void Main(string[] args)
         {
-            var marina = new Model.Port(32, 32);
+            var port = new Port(32, 32);
 
-            Print.Value(marina.Size, "Marina Size");
-            Print.Value(marina.Boats.Count());
+            Print.Value(port.Size, "Marina Size");
+            Print.Value(port.Boats.Count());
             var boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
                                       RowingBoat.CharacteristicLimits.min);
-            var result = marina.TryAdd(boat);
+            var result = port.TryAdd(boat);
             Print.Value(result, "Could add boat");
-            Print.Value(marina.Boats.Count());
+            Print.Value(port.Boats.Count());
             
             boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
                                   RowingBoat.CharacteristicLimits.min);
-            result = marina.TryAdd(boat);
+            result = port.TryAdd(boat);
             Print.Value(result, "Could add boat");
-            Print.Value(marina.Boats.Count());
+            Print.Value(port.Boats.Count());
 
-            foreach (Boat b in marina.Boats)
+            foreach (Boat b in port.Boats)
             {
                 WriteLine($"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
             }
