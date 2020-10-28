@@ -1,4 +1,4 @@
-﻿namespace Marina.Model
+﻿namespace Harbor.Model
 {
     public class CargoShip : Boat
     {

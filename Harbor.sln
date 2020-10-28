@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Marina.ConsoleUI", "Marina\Marina.ConsoleUI.csproj", "{BD90C1EE-1BD2-40F0-B738-1835F492E08A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harbor.ConsoleUI", "Marina\Harbor.ConsoleUI.csproj", "{BD90C1EE-1BD2-40F0-B738-1835F492E08A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Marina.Model", "MarinaModel\Marina.Model.csproj", "{EEE0E3C7-D435-4AF8-A9FC-16A70A355730}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harbor.Model", "MarinaModel\Harbor.Model.csproj", "{EEE0E3C7-D435-4AF8-A9FC-16A70A355730}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Globalization;
 
-namespace Marina.Model
+namespace Harbor.Model
 {
     /// <summary>
     /// The abstract base-class for all types of boats seeking mooring.
@@ -79,6 +78,12 @@ namespace Marina.Model
 
         private string Code { get; set; }
 
+        /// <inheritdoc />
+        public int CompareTo(Boat other)
+        {
+            return string.Compare(IdentityCode, other.IdentityCode, StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary>
         /// Regenerate the unique 3-letter identifier for this boat.
         /// </summary>
@@ -101,9 +106,5 @@ namespace Marina.Model
 
             return arg;
         }
-
-        /// <inheritdoc />
-        public int CompareTo(Boat other) =>
-            string.Compare(IdentityCode, other.IdentityCode, StringComparison.OrdinalIgnoreCase);
     }
 }

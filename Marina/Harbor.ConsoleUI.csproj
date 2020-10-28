@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MarinaModel\Marina.Model.csproj" />
+    <ProjectReference Include="..\MarinaModel\Harbor.Model.csproj" />
   </ItemGroup>
 
 </Project>

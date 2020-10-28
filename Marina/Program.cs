@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Marina.Model;
+﻿using System.Linq;
+using Harbor.Model;
 using static System.Console;
 
-namespace Marina.ConsoleUI
+namespace Harbor.ConsoleUI
 {
     internal class Program
     {

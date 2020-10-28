@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marina.Model
+namespace Harbor.Model
 {
     internal class SharedBerth : IBerth
     {
@@ -17,6 +17,9 @@ namespace Marina.Model
         public double FreeSpace { get; private set; }
 
         /// <inheritdoc />
+        public IEnumerable<(Boat boat, int berthTime)> Occupancy => spots.AsEnumerable();
+
+        /// <inheritdoc />
         public int Size => 1;
 
         /// <inheritdoc />
@@ -29,15 +32,12 @@ namespace Marina.Model
         }
 
         /// <inheritdoc />
-        public IEnumerable<(Boat boat, int berthTime)> Occupancy => spots.AsEnumerable();
-
-        /// <inheritdoc />
         public void IncrementTime()
         {
             for (var i = 0; i < spots.Count; i++)
             {
-                (Boat boat, int berthedFor) spot = spots[i];
-                spots[i] = (spot.boat, spot.berthedFor + 1);
+                (Boat boat, int berthedFor) = spots[i];
+                spots[i] = (boat, berthedFor + 1);
             }
         }
 
