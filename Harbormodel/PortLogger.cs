@@ -1,67 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace Harbor.Model
 {
     public class PortLogger : IPort
     {
-        private readonly IPort port;
-        private FileInfo fileInfo;
+        private readonly FileInfo fileInfo;
 
         public PortLogger(IPort port, string path) : this(port, path, false)
         {
         }
+
         public PortLogger(IPort port, string path, bool overwrite)
         {
-            this.port = port;
+            UnderlyingData = port;
             fileInfo = new FileInfo(path);
-            if (overwrite && fileInfo.Exists)
-            {
-                fileInfo.Delete();
-            }
+            if (overwrite && fileInfo.Exists) fileInfo.Delete();
         }
 
-        public IPort Underlying => port;
+        /// <inheritdoc />
+        public int BoatCount => UnderlyingData.BoatCount;
 
         /// <inheritdoc />
-        public int BoatCount => port.BoatCount;
+        public IEnumerable<Boat> Boats => UnderlyingData.Boats;
 
         /// <inheritdoc />
-        public IEnumerable<Boat> Boats => port.Boats;
+        public int DockCount => UnderlyingData.DockCount;
 
         /// <inheritdoc />
-        public int DockCount => port.DockCount;
+        public IEnumerable<Dock> Docks => UnderlyingData.Docks;
 
         /// <inheritdoc />
-        public IEnumerable<Dock> Docks => port.Docks;
+        public IEnumerable<Boat> LeftToday => UnderlyingData.LeftToday;
 
         /// <inheritdoc />
-        public IEnumerable<Boat> LeftToday => port.LeftToday;
+        public int Size => UnderlyingData.Size;
 
         /// <inheritdoc />
-        public DateTime Time => port.Time;
+        public DateTime Time => UnderlyingData.Time;
 
         /// <inheritdoc />
-        public int Size => port.Size;
+        public IPort UnderlyingData { get; }
 
         /// <inheritdoc />
         public void IncrementTime()
         {
-            var prevTime = port.Time;
-            port.IncrementTime();
-            Log($"Time incremented: [{prevTime:d}] => [{port.Time:d}]");
-            foreach (Boat boat in LeftToday)
-            {
-                LogWithDate("left the port.", boat);
-            }
+            DateTime prevTime = UnderlyingData.Time;
+            UnderlyingData.IncrementTime();
+            Log($"Time incremented: [{prevTime:d}] => [{UnderlyingData.Time:d}]");
+            foreach (Boat boat in LeftToday) LogWithDate("left the port.", boat);
         }
 
         /// <inheritdoc />
         public bool TryAdd(Boat boat)
         {
-            var success = port.TryAdd(boat);
+            bool success = UnderlyingData.TryAdd(boat);
             if (success)
                 LogWithDate("found space at the harbor.", boat);
             else
@@ -73,17 +67,25 @@ namespace Harbor.Model
         /// <inheritdoc />
         public bool TryRemove(Boat boat)
         {
-            var success = port.TryRemove(boat);
-            if (success) LogWithDate("was removed from the harbor.", boat);
-            else LogWithDate("could not be found and removed from the harbor.", boat);
+            bool success = UnderlyingData.TryRemove(boat);
+            if (success)
+                LogWithDate("was removed from the harbor.", boat);
+            else
+                LogWithDate("could not be found and removed from the harbor.", boat);
 
             return success;
         }
 
+        private void Log(string str)
+        {
+            using StreamWriter sw = fileInfo.AppendText();
+            sw.WriteLine(str);
+        }
+
         private void LogWithDate(string str, Boat boat)
         {
-            var boatType = boat.GetType().Name;
-            var code = boat.IdentityCode;
+            string boatType = boat.GetType().Name;
+            string code = boat.IdentityCode;
             LogWithDate($"{boatType} with ID:({code}) {str}");
         }
 
@@ -91,12 +93,6 @@ namespace Harbor.Model
         {
             using StreamWriter sw = fileInfo.AppendText();
             sw.WriteLine($"[{Time:d}] {str}");
-        }
-
-        private void Log(string str)
-        {
-            using StreamWriter sw = fileInfo.AppendText();
-            sw.WriteLine(str);
         }
     }
 }

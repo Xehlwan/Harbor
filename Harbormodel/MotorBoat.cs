@@ -1,4 +1,6 @@
-﻿namespace Harbor.Model
+﻿using System;
+
+namespace Harbor.Model
 {
     public class MotorBoat : Boat
     {
@@ -10,6 +12,11 @@
             base(ValidateInput(weight, WeightLimits), ValidateInput(topSpeed, SpeedLimits))
         {
             HorsePower = ValidateInput(horsePower, CharacteristicLimits);
+        }
+        public MotorBoat(BoatData boatData) : base(boatData)
+        {
+            if (boatData.Prefix != CodePrefix) throw new InvalidCastException("The prefix doesn't match this type.");
+            HorsePower = boatData.Characteristic;
         }
 
         /// <inheritdoc cref="Boat.CharacteristicLimits" />
@@ -36,6 +43,8 @@
         public int HorsePower { get; }
 
         /// <inheritdoc />
-        protected override char Prefix { get; } = 'M';
+        protected override char Prefix => CodePrefix;
+
+        public static char CodePrefix { get; } = 'M';
     }
 }

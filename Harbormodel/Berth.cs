@@ -8,10 +8,10 @@ namespace Harbor.Model
         private readonly Boat boat;
         private int berthedFor;
 
-        public Berth(Boat boat)
+        public Berth(Boat boat, int berthedFor = 0)
         {
             this.boat = boat;
-            berthedFor = 0;
+            this.berthedFor = berthedFor;
         }
 
         /// <inheritdoc />
@@ -28,7 +28,7 @@ namespace Harbor.Model
 
         /// <exception cref="InvalidOperationException">Always thrown for this method on <see cref="Berth" />.</exception>
         /// <inheritdoc />
-        public IBerth AddBoat(Boat boat)
+        public IBerth AddBoat(Boat boat, int berthedFor)
         {
             throw new InvalidOperationException("No free space to add boat.");
         }

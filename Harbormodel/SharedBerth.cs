@@ -11,6 +11,7 @@ namespace Harbor.Model
         public SharedBerth(Boat boat)
         {
             spots.Add((boat, 0));
+            FreeSpace = 1.0 - boat.BerthSpace;
         }
 
         /// <inheritdoc />
@@ -23,11 +24,11 @@ namespace Harbor.Model
         public int Size => 1;
 
         /// <inheritdoc />
-        public IBerth AddBoat(Boat boat)
+        public IBerth AddBoat(Boat boat, int berthedFor)
         {
             if (FreeSpace < boat.BerthSpace) throw new InvalidOperationException("Not enough space to add boat.");
-            spots.Add((boat, 0));
-
+            spots.Add((boat, berthedFor));
+            FreeSpace -= boat.BerthSpace;
             return this;
         }
 
