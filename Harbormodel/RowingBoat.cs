@@ -23,6 +23,8 @@ namespace Harbor.Model
         /// <inheritdoc cref="Boat.CharacteristicLimits" />
         public new static (int min, int max) CharacteristicLimits => (1, 6);
 
+        public static char CodePrefix { get; } = 'R';
+
         /// <inheritdoc cref="Boat.SpeedLimits" />
         public new static (int min, int max) SpeedLimits => (1, 3);
 
@@ -48,7 +50,5 @@ namespace Harbor.Model
 
         /// <inheritdoc />
         protected override char Prefix => CodePrefix;
-
-        public static char CodePrefix { get; } = 'R';
     }
 }

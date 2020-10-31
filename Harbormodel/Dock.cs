@@ -54,6 +54,44 @@ namespace Harbor.Model
         public IEnumerable<Boat> LeftToday => leftToday.AsEnumerable();
         public int Size => berthSpots.Length;
 
+        public static Dock FromData(DockData dockData, Dictionary<string, BerthingAlgorithm> berthingChoices)
+        {
+            return new Dock(dockData, berthingChoices);
+        }
+
+        public DockData AsData()
+        {
+            int count = Boats.Count();
+            var data = new DockData
+            {
+                Size = Size,
+                BerthingChoiceAlgorithm = algorithmName,
+                Boats = new BoatData[count],
+                Indices = new int[count],
+                BerthTimes = new int[count],
+                LeftToday = leftToday.Select(b => b.AsData()).ToArray()
+            };
+
+            IBerth prev = null;
+            for (int source = 0, target = 0; source < berthSpots.Length; source++)
+            {
+                IBerth spot = berthSpots[source];
+
+                if (spot is null || spot == prev) continue;
+                foreach ((Boat boat, int berthTime) in spot.Occupancy)
+                {
+                    data.Indices[target] = source;
+                    data.Boats[target] = boat.AsData();
+                    data.BerthTimes[target] = berthTime;
+                    target++;
+                }
+
+                prev = spot;
+            }
+
+            return data;
+        }
+
         public void IncrementTime()
         {
             leftToday.Clear();
@@ -110,11 +148,6 @@ namespace Harbor.Model
             return false;
         }
 
-        public static Dock FromData(DockData dockData, Dictionary<string, BerthingAlgorithm> berthingChoices)
-        {
-            return new Dock(dockData, berthingChoices);
-        }
-
         private static int FirstFitAlgorithm(Boat boat, IBerth[] berths)
         {
             if (boat.BerthSpace < 1)
@@ -155,6 +188,7 @@ namespace Harbor.Model
             Boat boat = Boat.FromData(boatData);
             AddBoat(boat, index, berthedFor);
         }
+
         private void AddBoat(Boat boat, int index, int berthedFor = 0)
         {
             if (berthSpots[index] is null)
@@ -173,39 +207,6 @@ namespace Harbor.Model
             {
                 berthSpots[index].AddBoat(boat, berthedFor);
             }
-        }
-
-        public DockData AsData()
-        {
-            int count = Boats.Count();
-            var data = new DockData
-            {
-                Size = Size,
-                BerthingChoiceAlgorithm = algorithmName,
-                Boats = new BoatData[count],
-                Indices = new int[count],
-                BerthTimes = new int[count],
-                LeftToday = leftToday.Select(b => b.AsData()).ToArray()
-            };
-
-            IBerth prev = null;
-            for (int source = 0, target = 0; source < berthSpots.Length; source++)
-            {
-                IBerth spot = berthSpots[source];
-                if (spot is null || spot == prev) continue;
-                foreach ((Boat boat, int berthTime) in spot.Occupancy)
-                {
-                    data.Indices[target] = source;
-                    data.Boats[target] = boat.AsData();
-                    data.BerthTimes[target] = berthTime;
-                    target++;
-                }
-
-                prev = spot;
-
-            }
-
-            return data;
         }
     }
 }

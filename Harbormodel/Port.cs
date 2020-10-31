@@ -108,12 +108,9 @@ namespace Harbor.Model
             data.Time = Time;
             data.DockChoiceAlgorithm = algorithmName;
             data.Docks = new DockData[docks.Length];
-            for (int i = 0; i < docks.Length; i++)
-            {
-                data.Docks[i] = docks[i].AsData();
-            }
+            for (var i = 0; i < docks.Length; i++) data.Docks[i] = docks[i].AsData();
 
-            return JsonSerializer.Serialize(data, new JsonSerializerOptions(){WriteIndented = true});
+            return JsonSerializer.Serialize(data, new JsonSerializerOptions {WriteIndented = true});
         }
 
         public void SetAlgorithm(DockChoiceAlgorithm algorithm, string name)

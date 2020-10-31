@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Harbor.Model
+﻿namespace Harbor.Model
 {
     public class DockData
     {

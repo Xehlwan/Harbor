@@ -6,7 +6,7 @@ namespace Harbor.Model
 {
     public class PortLogger : IPort
     {
-        private readonly FileInfo fileInfo;
+        private FileInfo fileInfo;
 
         public PortLogger(IPort port, string path) : this(port, path, false)
         {
@@ -43,6 +43,11 @@ namespace Harbor.Model
         /// <inheritdoc />
         public IPort UnderlyingData { get; }
 
+        public string GetFileLocation()
+        {
+            return fileInfo.FullName;
+        }
+
         /// <inheritdoc />
         public void IncrementTime()
         {
@@ -50,6 +55,11 @@ namespace Harbor.Model
             UnderlyingData.IncrementTime();
             Log($"Time incremented: [{prevTime:d}] => [{UnderlyingData.Time:d}]");
             foreach (Boat boat in LeftToday) LogWithDate("left the port.", boat);
+        }
+
+        public void SetFileLocation(string filePath)
+        {
+            fileInfo = new FileInfo(filePath);
         }
 
         /// <inheritdoc />

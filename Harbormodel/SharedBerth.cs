@@ -29,6 +29,7 @@ namespace Harbor.Model
             if (FreeSpace < boat.BerthSpace) throw new InvalidOperationException("Not enough space to add boat.");
             spots.Add((boat, berthedFor));
             FreeSpace -= boat.BerthSpace;
+
             return this;
         }
 

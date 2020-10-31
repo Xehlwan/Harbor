@@ -85,6 +85,30 @@ namespace Harbor.Model
 
         private string Code { get; set; }
 
+        public static Boat FromData(BoatData boatData)
+        {
+            var type = Type.GetType(boatData.Type);
+
+            if (type is null) return null;
+
+            return (Boat) Activator.CreateInstance(type, boatData);
+        }
+
+        public BoatData AsData()
+        {
+            var data = new BoatData
+            {
+                Type = GetType().FullName,
+                Prefix = Prefix,
+                Code = Code,
+                TopSpeed = TopSpeed,
+                Weight = Weight,
+                Characteristic = CharacteristicValue
+            };
+
+            return data;
+        }
+
         /// <inheritdoc />
         public int CompareTo(Boat other)
         {
@@ -112,29 +136,6 @@ namespace Harbor.Model
                 throw new ArgumentException($"Input was {arg}, but limits are from {min} to {max}.");
 
             return arg;
-        }
-
-        public BoatData AsData()
-        {
-            var data = new BoatData
-            {
-                Type = GetType().FullName,
-                Prefix = Prefix,
-                Code = Code,
-                TopSpeed = TopSpeed,
-                Weight = Weight,
-                Characteristic = CharacteristicValue
-            };
-
-            return data;
-        }
-
-        public static Boat FromData(BoatData boatData)
-        {
-            Type type = Type.GetType(boatData.Type);
-
-            if (type is null) return null;
-            return (Boat)Activator.CreateInstance(type, boatData);
         }
     }
 }

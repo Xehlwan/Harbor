@@ -13,6 +13,7 @@ namespace Harbor.Model
         {
             HorsePower = ValidateInput(horsePower, CharacteristicLimits);
         }
+
         public MotorBoat(BoatData boatData) : base(boatData)
         {
             if (boatData.Prefix != CodePrefix) throw new InvalidCastException("The prefix doesn't match this type.");
@@ -21,6 +22,8 @@ namespace Harbor.Model
 
         /// <inheritdoc cref="Boat.CharacteristicLimits" />
         public new static (int min, int max) CharacteristicLimits => (10, 1000);
+
+        public static char CodePrefix { get; } = 'M';
 
         /// <inheritdoc cref="Boat.SpeedLimits" />
         public new static (int min, int max) SpeedLimits => (1, 60);
@@ -44,7 +47,5 @@ namespace Harbor.Model
 
         /// <inheritdoc />
         protected override char Prefix => CodePrefix;
-
-        public static char CodePrefix { get; } = 'M';
     }
 }
