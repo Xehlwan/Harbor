@@ -8,39 +8,88 @@ namespace Harbor.ConsoleUI
     {
         private static void Main(string[] args)
         {
+            //ModelTest();
+        }
+
+        private static void ModelTest()
+        {
+            // Init
+            BufferHeight = 300;
             IPort port = new Port(32, 32);
             port = new PortLogger(port, "test.log", true);
 
+            // Print port stats
             Print.Value(port.Size, "Marina Size");
             Print.Value(port.Boats.Count());
-            var boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
-                                      RowingBoat.CharacteristicLimits.min);
-            var result = port.TryAdd(boat);
+
+            // Add rowing boat
+            Boat boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
+                                       RowingBoat.CharacteristicLimits.min);
+
+            bool result = port.TryAdd(boat);
             Print.Value(result, "Could add boat");
             Print.Value(port.Boats.Count());
-            
+
+            // Add Rowing boat
             boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
                                   RowingBoat.CharacteristicLimits.min);
+
             result = port.TryAdd(boat);
             Print.Value(result, "Could add boat");
             Print.Value(port.Boats.Count());
 
-            foreach (Boat b in port.Boats)
-            {
-                WriteLine($"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
-            }
+            // Add Catamaran
+            boat = new Catamaran(Catamaran.WeightLimits.min, Catamaran.SpeedLimits.min,
+                                 Catamaran.CharacteristicLimits.min);
 
+            result = port.TryAdd(boat);
+            Print.Value(result, "Could add boat");
+            Print.Value(port.Boats.Count());
+
+            // Add Catamaran
+            boat = new Catamaran(Catamaran.WeightLimits.min, Catamaran.SpeedLimits.min,
+                                 Catamaran.CharacteristicLimits.min);
+
+            result = port.TryAdd(boat);
+            Print.Value(result, "Could add boat");
+            Print.Value(port.Boats.Count());
+
+            // Print boats
+            foreach (Boat b in port.Boats)
+                WriteLine(
+                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
+
+            // Serialize
+            WriteLine("Serializing to JSON...");
+            string json = ((Port) port.UnderlyingData).Serialize();
+
+            // Remove and increment time.
             port.TryRemove(boat);
             foreach (Boat b in port.Boats)
-            {
-                WriteLine($"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
-            }
-            port.IncrementTime();
-            port.IncrementTime();
-            port.IncrementTime();
-            port.IncrementTime();
-            
+                WriteLine(
+                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
 
+            port.IncrementTime();
+            port.IncrementTime();
+
+            // Print boats
+            foreach (Boat b in port.Boats)
+                WriteLine(
+                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
+
+            Print.Value(port.Boats.Count());
+
+            // Deserializing
+            WriteLine("Deserializing...");
+
+            port = new PortLogger(Port.Deserialize(json), "test.log");
+
+            // Print boats
+            foreach (Boat b in port.Boats)
+                WriteLine(
+                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
+
+            Print.Value(port.Boats.Count());
         }
     }
 }

@@ -21,6 +21,13 @@ namespace Harbor.Model
             RegenerateCode();
         }
 
+        protected Boat(BoatData boatData)
+        {
+            Weight = boatData.Weight;
+            TopSpeed = boatData.TopSpeed;
+            Code = boatData.Code;
+        }
+
         /// <summary>
         /// The limits to the unique characteristics for this boat-type. Defaults to unlimited positive values.
         /// </summary>
@@ -77,6 +84,30 @@ namespace Harbor.Model
         protected abstract char Prefix { get; }
 
         private string Code { get; set; }
+
+        public static Boat FromData(BoatData boatData)
+        {
+            var type = Type.GetType(boatData.Type);
+
+            if (type is null) return null;
+
+            return (Boat) Activator.CreateInstance(type, boatData);
+        }
+
+        public BoatData AsData()
+        {
+            var data = new BoatData
+            {
+                Type = GetType().FullName,
+                Prefix = Prefix,
+                Code = Code,
+                TopSpeed = TopSpeed,
+                Weight = Weight,
+                Characteristic = CharacteristicValue
+            };
+
+            return data;
+        }
 
         /// <inheritdoc />
         public int CompareTo(Boat other)

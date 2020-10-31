@@ -1,42 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Harbor.Model
 {
     public class Dock
     {
-        private readonly IBerth[] berths;
+        private readonly IBerth[] berthSpots;
         private readonly List<Boat> leftToday = new List<Boat>();
+        private string algorithmName;
         private BerthingAlgorithm berthingAlgorithm;
 
-        public Dock(int size, BerthingAlgorithm algorithm)
+        public Dock(int size)
         {
-            berths = new IBerth[size];
-            berthingAlgorithm = algorithm;
+            berthSpots = new IBerth[size];
+            SetBerthingAlgorithm(DefaultBerthing, nameof(DefaultBerthing));
+        }
+
+        private Dock(DockData data, Dictionary<string, BerthingAlgorithm> berthingChoices)
+        {
+            berthSpots = new IBerth[data.Size];
+            for (var i = 0; i < data.Boats.Length; i++) AddBoat(data.Boats[i], data.Indices[i], data.BerthTimes[i]);
+            foreach (BoatData boatData in data.LeftToday) leftToday.Add(Boat.FromData(boatData));
+
+            if (berthingChoices.TryGetValue(data.BerthingChoiceAlgorithm, out BerthingAlgorithm berthingChoice))
+                SetBerthingAlgorithm(berthingChoice, data.BerthingChoiceAlgorithm);
+            else
+                SetBerthingAlgorithm(DefaultBerthing, nameof(DefaultBerthing));
         }
 
         /// <summary>
         /// An algorithm for finding a place to make berth.
         /// </summary>
         /// <param name="boat">The boat seeking berth</param>
-        /// <param name="freeBerths">An array for all spots where occupied spots are marked with <see langword="false" />.</param>
+        /// <param name="berths">An array for all spots where occupied spots are marked with <see langword="false" />.</param>
         /// <returns>The index for the best berth, or a negative value if none is found.</returns>
         public delegate int BerthingAlgorithm(Boat boat, IBerth[] berths);
 
         public static BerthingAlgorithm DefaultBerthing => FirstFitAlgorithm;
 
         public IEnumerable<IBerth> Berths =>
-            berths.Where(berth => berth != null)
-                  .GroupBy(berth => berth)
-                  .Select(group => group.First());
+            berthSpots.Where(berth => berth != null)
+                      .GroupBy(berth => berth)
+                      .Select(group => group.First());
+
+        public ImmutableArray<IBerth> BerthSpots => berthSpots.ToImmutableArray();
 
         public int BoatCount => Boats.Count();
 
         public IEnumerable<Boat> Boats => Berths.SelectMany(berth => berth.Occupancy.Select(item => item.boat));
 
         public IEnumerable<Boat> LeftToday => leftToday.AsEnumerable();
-        public int Size => berths.Length;
+        public int Size => berthSpots.Length;
+
+        public static Dock FromData(DockData dockData, Dictionary<string, BerthingAlgorithm> berthingChoices)
+        {
+            return new Dock(dockData, berthingChoices);
+        }
+
+        public DockData AsData()
+        {
+            int count = Boats.Count();
+            var data = new DockData
+            {
+                Size = Size,
+                BerthingChoiceAlgorithm = algorithmName,
+                Boats = new BoatData[count],
+                Indices = new int[count],
+                BerthTimes = new int[count],
+                LeftToday = leftToday.Select(b => b.AsData()).ToArray()
+            };
+
+            IBerth prev = null;
+            for (int source = 0, target = 0; source < berthSpots.Length; source++)
+            {
+                IBerth spot = berthSpots[source];
+
+                if (spot is null || spot == prev) continue;
+                foreach ((Boat boat, int berthTime) in spot.Occupancy)
+                {
+                    data.Indices[target] = source;
+                    data.Boats[target] = boat.AsData();
+                    data.BerthTimes[target] = berthTime;
+                    target++;
+                }
+
+                prev = spot;
+            }
+
+            return data;
+        }
 
         public void IncrementTime()
         {
@@ -52,9 +106,10 @@ namespace Harbor.Model
             foreach (Boat boat in leftToday) TryRemove(boat);
         }
 
-        public void SetBerthingAlgorithm(BerthingAlgorithm algorithm)
+        public void SetBerthingAlgorithm(BerthingAlgorithm algorithm, string algorithmName)
         {
             berthingAlgorithm = algorithm;
+            this.algorithmName = algorithmName;
         }
 
         public bool TryAdd(Boat boat)
@@ -67,7 +122,7 @@ namespace Harbor.Model
             if (Boats.Contains(boat))
                 throw new ArgumentException("A boat with the same id is already berthed.", nameof(boat));
 
-            int index = algorithm(boat, berths);
+            int index = algorithm(boat, berthSpots);
 
             if (index < 0) return false;
             AddBoat(boat, index);
@@ -77,14 +132,14 @@ namespace Harbor.Model
 
         public bool TryRemove(Boat boat)
         {
-            for (var i = 0; i < berths.Length; i++)
+            for (var i = 0; i < berthSpots.Length; i++)
             {
-                if (berths[i] is null) continue;
-                if (berths[i].Occupancy.Select(o => o.boat).Contains(boat))
+                if (berthSpots[i] is null) continue;
+                if (berthSpots[i].Occupancy.Select(o => o.boat).Contains(boat))
                 {
-                    int size = berths[i].Size;
-                    IBerth berth = berths[i].RemoveBoat(boat);
-                    for (var j = 0; j < size; j++) berths[i + j] = berth;
+                    int size = berthSpots[i].Size;
+                    IBerth berth = berthSpots[i].RemoveBoat(boat);
+                    for (var j = 0; j < size; j++) berthSpots[i + j] = berth;
 
                     return true;
                 }
@@ -128,23 +183,29 @@ namespace Harbor.Model
             return freeSpots;
         }
 
-        private void AddBoat(Boat boat, int index)
+        private void AddBoat(BoatData boatData, int index, int berthedFor = 0)
         {
-            if (berths[index] is null)
+            Boat boat = Boat.FromData(boatData);
+            AddBoat(boat, index, berthedFor);
+        }
+
+        private void AddBoat(Boat boat, int index, int berthedFor = 0)
+        {
+            if (berthSpots[index] is null)
             {
                 if (boat.BerthSpace < 1)
                 {
-                    berths[index] = new SharedBerth(boat);
+                    berthSpots[index] = new SharedBerth(boat);
                 }
                 else
                 {
-                    var berth = new Berth(boat);
-                    for (var offset = 0; offset < boat.BerthSpace; offset++) berths[index + offset] = berth;
+                    var berth = new Berth(boat, berthedFor);
+                    for (var offset = 0; offset < boat.BerthSpace; offset++) berthSpots[index + offset] = berth;
                 }
             }
             else
             {
-                berths[index].AddBoat(boat);
+                berthSpots[index].AddBoat(boat, berthedFor);
             }
         }
     }
