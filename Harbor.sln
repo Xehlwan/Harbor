@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harbor.ConsoleUI", "HarborConsole\Harbor.ConsoleUI.csproj", "{BD90C1EE-1BD2-40F0-B738-1835F492E08A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harbor.Console", "HarborConsole\Harbor.Console.csproj", "{BD90C1EE-1BD2-40F0-B738-1835F492E08A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harbor.Model", "Harbormodel\Harbor.Model.csproj", "{EEE0E3C7-D435-4AF8-A9FC-16A70A355730}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Harbor.Wpf", "Harbor.Wpf\Harbor.Wpf.csproj", "{FC7ABBD0-9EF6-464E-B4B2-240AEF526EB1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{EEE0E3C7-D435-4AF8-A9FC-16A70A355730}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEE0E3C7-D435-4AF8-A9FC-16A70A355730}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEE0E3C7-D435-4AF8-A9FC-16A70A355730}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7ABBD0-9EF6-464E-B4B2-240AEF526EB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7ABBD0-9EF6-464E-B4B2-240AEF526EB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7ABBD0-9EF6-464E-B4B2-240AEF526EB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7ABBD0-9EF6-464E-B4B2-240AEF526EB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

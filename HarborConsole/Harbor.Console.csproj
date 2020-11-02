@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Harbor.Wpf\Harbor.Wpf.csproj" />
     <ProjectReference Include="..\HarborModel\Harbor.Model.csproj" />
   </ItemGroup>
 

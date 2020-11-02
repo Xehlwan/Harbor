@@ -1,95 +1,53 @@
-﻿using System.Linq;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Windows;
 using Harbor.Model;
 using static System.Console;
 
-namespace Harbor.ConsoleUI
+namespace Harbor.Console
 {
     internal class Program
     {
+        private const bool debugWindowed = true;
+        private const bool debugModelTest = false;
+        private const string logPath = "port.log";
+        private const string savePath = "port.json";
+        private static IPort port;
+        private static FileInfo saveFile;
+        private static PortControl portControl;
+
+        [STAThread]
         private static void Main(string[] args)
         {
-            //ModelTest();
+            Initialize();
+            LoadWindow();
         }
 
-        private static void ModelTest()
+        private static void Initialize()
         {
-            // Init
-            BufferHeight = 300;
-            IPort port = new Port(32, 32);
-            port = new PortLogger(port, "test.log", true);
+            saveFile = new FileInfo(savePath);
+            if (saveFile.Exists)
+            {
+                using StreamReader sr = saveFile.OpenText();
+                string json = sr.ReadToEnd();
+                port = Port.Deserialize(json);
+            }
+            else
+            {
+                port = new Port(32, 32);
+            }
 
-            // Print port stats
-            Print.Value(port.Size, "Marina Size");
-            Print.Value(port.Boats.Count());
+            port = new PortLogger(port, logPath);
+            portControl = new PortControl(port);
+        }
 
-            // Add rowing boat
-            Boat boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
-                                       RowingBoat.CharacteristicLimits.min);
-
-            bool result = port.TryAdd(boat);
-            Print.Value(result, "Could add boat");
-            Print.Value(port.Boats.Count());
-
-            // Add Rowing boat
-            boat = new RowingBoat(RowingBoat.WeightLimits.min, RowingBoat.SpeedLimits.min,
-                                  RowingBoat.CharacteristicLimits.min);
-
-            result = port.TryAdd(boat);
-            Print.Value(result, "Could add boat");
-            Print.Value(port.Boats.Count());
-
-            // Add Catamaran
-            boat = new Catamaran(Catamaran.WeightLimits.min, Catamaran.SpeedLimits.min,
-                                 Catamaran.CharacteristicLimits.min);
-
-            result = port.TryAdd(boat);
-            Print.Value(result, "Could add boat");
-            Print.Value(port.Boats.Count());
-
-            // Add Catamaran
-            boat = new Catamaran(Catamaran.WeightLimits.min, Catamaran.SpeedLimits.min,
-                                 Catamaran.CharacteristicLimits.min);
-
-            result = port.TryAdd(boat);
-            Print.Value(result, "Could add boat");
-            Print.Value(port.Boats.Count());
-
-            // Print boats
-            foreach (Boat b in port.Boats)
-                WriteLine(
-                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
-
-            // Serialize
-            WriteLine("Serializing to JSON...");
-            string json = ((Port) port.UnderlyingData).Serialize();
-
-            // Remove and increment time.
-            port.TryRemove(boat);
-            foreach (Boat b in port.Boats)
-                WriteLine(
-                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
-
-            port.IncrementTime();
-            port.IncrementTime();
-
-            // Print boats
-            foreach (Boat b in port.Boats)
-                WriteLine(
-                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
-
-            Print.Value(port.Boats.Count());
-
-            // Deserializing
-            WriteLine("Deserializing...");
-
-            port = new PortLogger(Port.Deserialize(json), "test.log");
-
-            // Print boats
-            foreach (Boat b in port.Boats)
-                WriteLine(
-                    $"{b.GetType().Name}[{b.IdentityCode}]: Weight {b.Weight}, Speed {b.TopSpeed}, {b.Characteristic} {b.CharacteristicValue}");
-
-            Print.Value(port.Boats.Count());
+        private static void LoadWindow()
+        {
+            Window main = new Wpf.MainWindow(portControl);
+            main.ShowDialog();
+            WriteLine("Window closed!");
         }
     }
 }

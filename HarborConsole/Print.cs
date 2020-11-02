@@ -1,18 +1,18 @@
 ﻿using System;
 
-namespace Harbor.ConsoleUI
+namespace Harbor.Console
 {
     public static class Print
     {
         public static void Value<T>(in T value)
         {
             Type type = value.GetType();
-            Console.WriteLine($"[{type.Name}]: {value}");
+            System.Console.WriteLine($"[{type.Name}]: {value}");
         }
 
         public static void Value<T>(in T value, string label)
         {
-            Console.WriteLine($"{label}: {value}");
+            System.Console.WriteLine($"{label}: {value}");
         }
     }
 }
