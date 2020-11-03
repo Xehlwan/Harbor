@@ -43,7 +43,7 @@ namespace Harbor.Model
             if (dockChoices.TryGetValue(data.DockChoiceAlgorithm, out DockChoiceAlgorithm dockChoice))
                 SetAlgorithm(dockChoice, data.DockChoiceAlgorithm);
             else
-                SetAlgorithm(DockChoiceDefault, nameof(DockChoiceDefault));
+                SetAlgorithm(DockChoiceEmptiest, nameof(DockChoiceEmptiest));
 
             docks = new Dock[data.Docks.Length];
 
@@ -51,8 +51,6 @@ namespace Harbor.Model
         }
 
         public delegate IOrderedEnumerable<Dock> DockChoiceAlgorithm(Boat boat, Dock[] docks);
-
-        public static DockChoiceAlgorithm DockChoiceDefault => EmptiestChoice;
 
         public static DockChoiceAlgorithm DockChoiceEmptiest => EmptiestChoice;
 
@@ -81,8 +79,8 @@ namespace Harbor.Model
 
         public static Port Deserialize(string portJsonString)
         {
-            var dockChoices = new Dictionary<string, DockChoiceAlgorithm>();
-            var berthingChoices = new Dictionary<string, Dock.BerthingAlgorithm>();
+            var dockChoices = new Dictionary<string, DockChoiceAlgorithm>(HarborHelper.RegisteredDockAlgorithms);
+            var berthingChoices = new Dictionary<string, Dock.BerthingAlgorithm>(HarborHelper.RegisteredBerthingAlgorithms);
 
             return Deserialize(portJsonString, dockChoices, berthingChoices);
         }
@@ -104,10 +102,11 @@ namespace Harbor.Model
 
         public string Serialize()
         {
-            var data = new PortData();
-            data.Time = Time;
-            data.DockChoiceAlgorithm = algorithmName;
-            data.Docks = new DockData[docks.Length];
+            var data = new PortData
+            {
+                Time = Time, DockChoiceAlgorithm = algorithmName, Docks = new DockData[docks.Length]
+            };
+
             for (var i = 0; i < docks.Length; i++) data.Docks[i] = docks[i].AsData();
 
             return JsonSerializer.Serialize(data, new JsonSerializerOptions {WriteIndented = true});

@@ -3,8 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:m="clr-namespace:Harbor.Model;assembly=Harbor.Model"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <StatusBar Height="auto" VerticalAlignment="Bottom" UseLayoutRounding="True">
+    <Grid UseLayoutRounding="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StatusBar Height="auto" VerticalAlignment="Bottom" UseLayoutRounding="True" Grid.Row="2" Grid.ColumnSpan="2">
             <StatusBar.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid>
@@ -52,12 +61,31 @@
                              Value="{Binding Mode=OneWay, Path=(m:PortControl.FreePercentage)}" />
             </StatusBarItem>
         </StatusBar>
-        <Button Content="Add Random" HorizontalAlignment="Left" Margin="338,369,0,0" VerticalAlignment="Top"
-                Click="AddRandom_Click" />
-        <Button Content="Remove One" HorizontalAlignment="Left" Margin="431,369,0,0" VerticalAlignment="Top"
-                Click="RemoveFirst_Click" />
-        <Button Content="Increment Day" HorizontalAlignment="Left" Margin="531,369,0,0" VerticalAlignment="Top"
-                Click="TickDay_Click" />
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="5">
+            
+        </StackPanel>
+        <DataGrid Grid.Column="0" Grid.Row="0" Margin="10, 0, 0, 0">
 
+        </DataGrid>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10, 10, 10, 0">
+            <StackPanel>
+                <Label Name="AutomationLabel">Automation</Label>
+                <RadioButton GroupName="AutomationSwitch" Name="AutoSwitchOn" Checked="ToggleAutomation_OnChecked">On</RadioButton>
+                <RadioButton GroupName="AutomationSwitch" Name="AutoSwitchOff" IsChecked="True" Checked="ToggleAutomation_OnChecked">Off</RadioButton>
+            </StackPanel>
+            <WrapPanel>
+                <Label Height="24">Boats/day:</Label>
+                <TextBox Width="20" Height="18" Text="{Binding Path=(m:PortControl.AutoBoatsPerDay) }" />
+            </WrapPanel>
+            <StackPanel UseLayoutRounding="True">
+                <Label Name="LogLabel">Log Ticker</Label>
+                <RadioButton GroupName="LogSwitch" Name="LogSwitchOn" Checked="ToggleLogChecker_OnChecked">On</RadioButton>
+                <RadioButton GroupName="LogSwitch" Name="LogSwitchOff" IsChecked="True" Checked="ToggleLogChecker_OnChecked">Off</RadioButton>
+            </StackPanel>
+            <Button Name="RandomButton" Padding="4,2" Margin="0,5" Click="AddRandom_Click">Add Random</Button>
+            <Button Name="SaveDataButton" Padding="4,2" Margin="0,5" Click="SaveDataButton_OnClick">Save Data</Button>
+            <Button Name="LoadDataButton" Padding="4,2" Margin="0,5" Click="LoadDataButton_OnClick">Load Data</Button>
+            <Button Name="ResetHarborButton" Padding="4,2" Margin="0,5" Click="ResetHarborButton_OnClick">Reset Harbor</Button>
+        </StackPanel>
     </Grid>
 </Window>

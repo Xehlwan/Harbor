@@ -43,7 +43,10 @@ namespace Harbor.Model
         /// <inheritdoc />
         public IPort UnderlyingData { get; }
 
-        public string GetFileLocation() => fileInfo.FullName;
+        public string GetFileLocation()
+        {
+            return fileInfo.FullName;
+        }
 
         /// <inheritdoc />
         public void IncrementTime()
@@ -54,7 +57,10 @@ namespace Harbor.Model
             foreach (Boat boat in LeftToday) LogWithDate("left the port.", boat);
         }
 
-        public void SetFileLocation(string filePath) => fileInfo = new FileInfo(filePath);
+        public void SetFileLocation(string filePath)
+        {
+            fileInfo = new FileInfo(filePath);
+        }
 
         /// <inheritdoc />
         public bool TryAdd(Boat boat)
@@ -72,6 +78,7 @@ namespace Harbor.Model
         public bool TryRemove(Boat boat)
         {
             bool success = UnderlyingData.TryRemove(boat);
+
             if (success)
                 LogWithDate("was removed from the harbor.", boat);
             else if (boat is null)

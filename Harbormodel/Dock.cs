@@ -194,7 +194,7 @@ namespace Harbor.Model
 
         private void AddBoat(BoatData boatData, int index, int berthedFor = 0)
         {
-            Boat boat = Boat.FromData(boatData);
+            var boat = Boat.FromData(boatData);
             AddBoat(boat, index, berthedFor);
         }
 
