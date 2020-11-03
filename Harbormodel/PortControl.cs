@@ -6,9 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Harbor.Model;
 
-namespace Harbor.Console
+namespace Harbor.Model
 {
     public class PortControl : INotifyPropertyChanged
     {
@@ -52,7 +51,7 @@ namespace Harbor.Console
             logCheckerActive = true;
             cancellationSource = new CancellationTokenSource();
             var token = cancellationSource.Token;
-            Task logChecker = new Task(() =>
+            var logChecker = new Task(() =>
             {
                 if (!File.Exists(logFile)) return;
                 logCheckerActive = true;
@@ -78,10 +77,7 @@ namespace Harbor.Console
             logChecker.Start();
         }
 
-        private void OnLogChanged()
-        {
-            OnPropertyChanged(nameof(LogLastLine));
-        }
+        private void OnLogChanged() => OnPropertyChanged(nameof(LogLastLine));
 
         private static string GetLogLast(string filePath) => !File.Exists(filePath) ? string.Empty : File.ReadLines("port.log").Last();
 

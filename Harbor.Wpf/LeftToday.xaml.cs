@@ -1,5 +1,5 @@
 ﻿using System.Windows;
-using Harbor.Console;
+using Harbor.Model;
 
 namespace Harbor.Wpf
 {
@@ -8,18 +8,12 @@ namespace Harbor.Wpf
     /// </summary>
     public partial class LeftToday : Window
     {
-        private readonly PortControl portControl;
-
         public LeftToday(PortControl control)
         {
             InitializeComponent();
-            portControl = control;
-            DataContext = portControl;
+            DataContext = control;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void Button_Click(object sender, RoutedEventArgs e) => Close();
     }
 }

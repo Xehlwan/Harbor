@@ -43,24 +43,18 @@ namespace Harbor.Model
         /// <inheritdoc />
         public IPort UnderlyingData { get; }
 
-        public string GetFileLocation()
-        {
-            return fileInfo.FullName;
-        }
+        public string GetFileLocation() => fileInfo.FullName;
 
         /// <inheritdoc />
         public void IncrementTime()
         {
             DateTime prevTime = UnderlyingData.Time;
             UnderlyingData.IncrementTime();
-            Log($"Time incremented: [{prevTime:d}] => [{UnderlyingData.Time:d}]");
+            Log($"[{prevTime:d}] => Time changed! => [{UnderlyingData.Time:d}]");
             foreach (Boat boat in LeftToday) LogWithDate("left the port.", boat);
         }
 
-        public void SetFileLocation(string filePath)
-        {
-            fileInfo = new FileInfo(filePath);
-        }
+        public void SetFileLocation(string filePath) => fileInfo = new FileInfo(filePath);
 
         /// <inheritdoc />
         public bool TryAdd(Boat boat)

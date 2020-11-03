@@ -3,6 +3,8 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Harbor.Model</RootNamespace>
+    <AssemblyName>Harbor.Model</AssemblyName>
   </PropertyGroup>
 
 </Project>

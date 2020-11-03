@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Windows;
-using Harbor.Console;
 using Harbor.Model;
 
 namespace Harbor.Wpf
@@ -20,10 +19,7 @@ namespace Harbor.Wpf
             portControl.StartLogChecker();
         }
 
-        private void AddRandom_Click(object sender, RoutedEventArgs e)
-        {
-            portControl.AddBoat(HarborHelper.GetRandomBoat());
-        }
+        private void AddRandom_Click(object sender, RoutedEventArgs e) => portControl?.AddBoat(HarborHelper.GetRandomBoat());
 
         private void LeftToday_Click(object sender, RoutedEventArgs e)
         {
@@ -33,14 +29,11 @@ namespace Harbor.Wpf
 
         private void RemoveFirst_Click(object sender, RoutedEventArgs e)
         {
-            Boat boat = portControl.Boats.FirstOrDefault();
-            portControl.RemoveBoat(boat);
+            Boat boat = portControl?.Boats.FirstOrDefault();
+            portControl?.RemoveBoat(boat);
         }
 
-        private void TickDay_Click(object sender, RoutedEventArgs e)
-        {
-            portControl.IncrementTime();
-        }
+        private void TickDay_Click(object sender, RoutedEventArgs e) => portControl?.IncrementTime();
 
         private void ShowLog_Click(object sender, RoutedEventArgs e)
         {

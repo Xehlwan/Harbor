@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Harbor.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:m="clr-namespace:Harbor.Console;assembly=Harbor.Model"
+        xmlns:m="clr-namespace:Harbor.Model;assembly=Harbor.Model"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <StatusBar Height="auto" VerticalAlignment="Bottom" UseLayoutRounding="True">
