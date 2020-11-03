@@ -1,17 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Harbor.Console;
 using Harbor.Model;
 
@@ -23,6 +11,7 @@ namespace Harbor.Wpf
     public partial class MainWindow : Window
     {
         private readonly PortControl portControl;
+
         public MainWindow(PortControl control)
         {
             InitializeComponent();
@@ -31,20 +20,31 @@ namespace Harbor.Wpf
             portControl.StartLogChecker();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void AddRandom_Click(object sender, RoutedEventArgs e)
         {
             portControl.AddBoat(HarborHelper.GetRandomBoat());
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void LeftToday_Click(object sender, RoutedEventArgs e)
         {
-            var boat = portControl.Boats.First();
+            var wnd = new LeftToday(portControl);
+            wnd.ShowDialog();
+        }
+
+        private void RemoveFirst_Click(object sender, RoutedEventArgs e)
+        {
+            Boat boat = portControl.Boats.FirstOrDefault();
             portControl.RemoveBoat(boat);
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void TickDay_Click(object sender, RoutedEventArgs e)
         {
             portControl.IncrementTime();
+        }
+
+        private void ShowLog_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

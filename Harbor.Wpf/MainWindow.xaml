@@ -9,13 +9,13 @@
                 <ItemsPanelTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </ItemsPanelTemplate>
@@ -23,32 +23,41 @@
             <StatusBarItem Grid.Column="0" Width="60">
                 <Span>
                     <TextBlock>In Port:</TextBlock>
-                    <TextBlock Text="{Binding Path=(m:PortControl.BoatsInPort)}"></TextBlock>
+                    <TextBlock Text="{Binding Path=(m:PortControl.BoatsInPort)}" />
                 </Span>
             </StatusBarItem>
-            <Separator Grid.Column="1"/>
+            <Separator Grid.Column="1" />
             <StatusBarItem Grid.Column="2">
-                <Button Background="{x:Null}" BorderBrush="{x:Null}">
+                <Button Background="{x:Null}" BorderBrush="{x:Null}" Click="LeftToday_Click">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Width="80">
                         <TextBlock Text="Left Today: " />
                         <TextBlock Text="{Binding Path=(m:PortControl.BoatsLeftCount)}" />
                     </StackPanel>
                 </Button>
             </StatusBarItem>
-            <Separator Grid.Column="3"/>
+            <Separator Grid.Column="3" />
             <StatusBarItem x:Name="StatusLogItem" Grid.Column="4">
-                <Button Background="{x:Null}" BorderBrush="{x:Null}" Width="{Binding ActualWidth, ElementName=StatusLogItem, Mode=OneWay}" HorizontalContentAlignment="Left" >
-                    <TextBlock Text="{Binding Path=(m:PortControl.LogLastLine)}"/>
+                <Button Background="{x:Null}" BorderBrush="{x:Null}"
+                        Width="{Binding ActualWidth, ElementName=StatusLogItem, Mode=OneWay}"
+                        HorizontalContentAlignment="Left" Click="ShowLog_Click">
+                    <TextBlock Name="LogTicker" Text="{Binding Path=(m:PortControl.LogLastLine)}" />
                 </Button>
             </StatusBarItem>
-            <Separator Grid.Column="5"/>
+            <Separator Grid.Column="5" />
             <StatusBarItem Grid.Column="6">
-                <ProgressBar Width="99" Height="16"/>
+                <ProgressBar Width="100"
+                             Height="16"
+                             Minimum="0"
+                             Maximum="1"
+                             Value="{Binding Mode=OneWay, Path=(m:PortControl.FreePercentage)}" />
             </StatusBarItem>
         </StatusBar>
-        <Button Content="Add Random" HorizontalAlignment="Left" Margin="338,369,0,0" VerticalAlignment="Top" Click="Button_Click"/>
-        <Button Content="Remove One" HorizontalAlignment="Left" Margin="431,369,0,0" VerticalAlignment="Top" Click="Button_Click_1"/>
-        <Button Content="Increment Day" HorizontalAlignment="Left" Margin="531,369,0,0" VerticalAlignment="Top" Click="Button_Click_2"/>
+        <Button Content="Add Random" HorizontalAlignment="Left" Margin="338,369,0,0" VerticalAlignment="Top"
+                Click="AddRandom_Click" />
+        <Button Content="Remove One" HorizontalAlignment="Left" Margin="431,369,0,0" VerticalAlignment="Top"
+                Click="RemoveFirst_Click" />
+        <Button Content="Increment Day" HorizontalAlignment="Left" Margin="531,369,0,0" VerticalAlignment="Top"
+                Click="TickDay_Click" />
 
     </Grid>
 </Window>
