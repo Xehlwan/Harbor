@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Harbor.Wpf</RootNamespace>
+    <AssemblyName>Harbor.Wpf</AssemblyName>
+    <UseWpf>true</UseWpf>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Harbormodel\Harbor.Model.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -37,6 +37,9 @@ namespace Harbor.Model
         public int BedCount { get; }
 
         /// <inheritdoc />
+        public override string TypeName { get; } = "Catamaran";
+
+        /// <inheritdoc />
         public override double BerthSpace => 3;
 
         /// <inheritdoc />

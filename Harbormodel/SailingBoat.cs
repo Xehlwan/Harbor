@@ -32,6 +32,9 @@ namespace Harbor.Model
         public new static (int min, int max) WeightLimits => (800, 6000);
 
         /// <inheritdoc />
+        public override string TypeName { get; } = "Sailing Boat";
+
+        /// <inheritdoc />
         public override double BerthSpace { get; } = 2;
 
         /// <inheritdoc />

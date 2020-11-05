@@ -27,6 +27,10 @@ namespace Harbor.Model
             TopSpeed = boatData.TopSpeed;
             Code = boatData.Code;
         }
+        /// <summary>
+        /// The name for this type of boat.
+        /// </summary>
+        public abstract string TypeName { get; }
 
         /// <summary>
         /// The limits to the unique characteristics for this boat-type. Defaults to unlimited positive values.

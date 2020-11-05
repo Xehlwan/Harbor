@@ -160,9 +160,18 @@ namespace Harbor.Model
 
             bool[] freeBerths = GetFreeBerths(boat.BerthSpace, berths);
 
-            for (var i = 0; i < berths.Length; i++)
-                if (freeBerths[i])
-                    return i;
+            for (var spot = 0; spot + boat.BerthSpace <= berths.Length; spot++)
+            {
+                var free = true;
+                for (var offset = 0; offset < boat.BerthSpace; offset++)
+                {
+                    free = freeBerths[spot + offset];
+
+                    if (!free) break;
+                }
+
+                if (free) return spot;
+            }
 
             return -1;
         }
@@ -185,7 +194,7 @@ namespace Harbor.Model
 
         private void AddBoat(BoatData boatData, int index, int berthedFor = 0)
         {
-            Boat boat = Boat.FromData(boatData);
+            var boat = Boat.FromData(boatData);
             AddBoat(boat, index, berthedFor);
         }
 

@@ -53,7 +53,7 @@ namespace Harbor.Model
         {
             DateTime prevTime = UnderlyingData.Time;
             UnderlyingData.IncrementTime();
-            Log($"Time incremented: [{prevTime:d}] => [{UnderlyingData.Time:d}]");
+            Log($"[{prevTime:d}] => Time changed! => [{UnderlyingData.Time:d}]");
             foreach (Boat boat in LeftToday) LogWithDate("left the port.", boat);
         }
 
@@ -78,8 +78,11 @@ namespace Harbor.Model
         public bool TryRemove(Boat boat)
         {
             bool success = UnderlyingData.TryRemove(boat);
+
             if (success)
                 LogWithDate("was removed from the harbor.", boat);
+            else if (boat is null)
+                return false;
             else
                 LogWithDate("could not be found and removed from the harbor.", boat);
 
