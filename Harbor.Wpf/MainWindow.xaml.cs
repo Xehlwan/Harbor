@@ -14,10 +14,12 @@ namespace Harbor.Wpf
 
         public MainWindow(PortControl control)
         {
-            InitializeComponent();
             portControl = control;
             DataContext = portControl;
+            InitializeComponent();
         }
+
+        
 
         private void AddRandom_Click(object sender, RoutedEventArgs e) => portControl?.AddBoat(HarborHelper.GetRandomBoat().boat);
 
@@ -37,7 +39,16 @@ namespace Harbor.Wpf
 
         private void ShowLog_Click(object sender, RoutedEventArgs e)
         {
+            new LogWindow(portControl.LogFile).ShowDialog();
+        }
 
+        private void SetInteractive(bool state)
+        {
+            RandomButton.IsEnabled = state;
+            BoatsPerDayInput.IsEnabled = state;
+            AddButton.IsEnabled = state;
+            RemoveButton.IsEnabled = state;
+            NextDayButton.IsEnabled = state;
         }
 
         private void ToggleAutomation_OnChecked(object sender, RoutedEventArgs e)
@@ -46,13 +57,13 @@ namespace Harbor.Wpf
 
             if ((AutoSwitchOn.IsChecked ?? false) && !portControl.IsSimulating)
             {
-                RandomButton.IsEnabled = false;
+                SetInteractive(false);
                 portControl.StartSimulation();
             }
             else if ((AutoSwitchOff.IsChecked ?? false) && portControl.IsSimulating)
             {
                 portControl.StopSimulation();
-                RandomButton.IsEnabled = true;
+                SetInteractive(true);
             }
         }
 
@@ -89,6 +100,28 @@ namespace Harbor.Wpf
         {
             portControl.ResetPort();
             MessageBox.Show("The harbor was reset.", "Reset", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var boatData = (PortDataRow)PortData.SelectedItem;
+            portControl.RemoveBoat(boatData.Boat);
+        }
+
+        private void AddButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            var wnd = new AddWindow(portControl);
+            wnd.ShowDialog();
+        }
+
+        private void NextDayButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            portControl.IncrementTime();
+        }
+
+        private void OpenTurnedAway_OnClick(object sender, RoutedEventArgs e)
+        {
+            new TurnedAwayWindow(portControl).ShowDialog();
         }
     }
 }

@@ -96,18 +96,21 @@ namespace Harbor.Model
         {
             return new Task(async () =>
             {
-                if (!File.Exists(logFile)) return;
-                DateTime lastWrite = File.GetLastWriteTimeUtc(logFile);
+                DateTime lastWrite = DateTime.MinValue;
+                while (lastWrite == DateTime.MinValue)
+                {
+                    try
+                    {
+                        lastWrite = File.GetLastWriteTimeUtc(logFile);
+                    }
+                    catch
+                    {
+                        // ignored
+                    }
+                }
+                
                 while (!token.IsCancellationRequested)
                 {
-                    if (!File.Exists(logFile)) return;
-                    DateTime currentWrite = File.GetLastWriteTimeUtc(logFile);
-                    if (currentWrite > lastWrite)
-                    {
-                        lastWrite = currentWrite;
-                        notify.Invoke();
-                    }
-
                     try
                     {
                         await Task.Delay(interval, token);
@@ -115,6 +118,20 @@ namespace Harbor.Model
                     catch (OperationCanceledException)
                     {
                         break;
+                    }
+
+                    try
+                    {
+                        DateTime currentWrite = File.GetLastWriteTimeUtc(logFile);
+                        if (currentWrite > lastWrite)
+                        {
+                            lastWrite = currentWrite;
+                            notify.Invoke();
+                        }
+                    }
+                    catch
+                    {
+                        // ignored
                     }
                 }
 

@@ -47,7 +47,14 @@ namespace Harbor.Model
 
             docks = new Dock[data.Docks.Length];
 
-            for (var i = 0; i < docks.Length; i++) docks[i] = Dock.FromData(data.Docks[i], berthingChoices);
+            int size = 0;
+            for (var i = 0; i < docks.Length; i++)
+            {
+                docks[i] = Dock.FromData(data.Docks[i], berthingChoices);
+                size += docks[i].Size;
+            }
+
+            Size = size;
         }
 
         public delegate IOrderedEnumerable<Dock> DockChoiceAlgorithm(Boat boat, Dock[] docks);
@@ -82,12 +89,6 @@ namespace Harbor.Model
             var dockChoices = new Dictionary<string, DockChoiceAlgorithm>(HarborHelper.RegisteredDockAlgorithms);
             var berthingChoices = new Dictionary<string, Dock.BerthingAlgorithm>(HarborHelper.RegisteredBerthingAlgorithms);
 
-            return Deserialize(portJsonString, dockChoices, berthingChoices);
-        }
-
-        public static Port Deserialize(string portJsonString, Dictionary<string, DockChoiceAlgorithm> dockChoices,
-                                       Dictionary<string, Dock.BerthingAlgorithm> berthingChoices)
-        {
             var data = JsonSerializer.Deserialize<PortData>(portJsonString);
 
             return new Port(data, dockChoices, berthingChoices);

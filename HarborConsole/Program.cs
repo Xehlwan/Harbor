@@ -14,8 +14,6 @@ namespace Harbor.Console
         private const bool debugModelTest = false;
         private const string logPath = "port.log";
         private const string savePath = "port.json";
-        private static IPort port;
-        private static FileInfo saveFile;
         private static PortControl portControl;
 
         [STAThread]
@@ -27,20 +25,8 @@ namespace Harbor.Console
 
         private static void Initialize()
         {
-            saveFile = new FileInfo(savePath);
-            if (saveFile.Exists)
-            {
-                using StreamReader sr = saveFile.OpenText();
-                string json = sr.ReadToEnd();
-                port = Port.Deserialize(json);
-            }
-            else
-            {
-                port = new Port(32, 32);
-            }
-
-            port = new PortLogger(port, logPath);
-            portControl = new PortControl(port);
+            portControl = new PortControl();
+            portControl.LoadPortData();
         }
 
         private static void LoadWindow()
