@@ -30,6 +30,8 @@ namespace Harbor.Model
             this.port = port;
         }
 
+        public int TotalWeight => Boats.Select(b => b.Weight).Sum();
+        public double AverageSpeed => Boats.Select(b => b.TopSpeed).Sum() / (double) BoatsInPort;
         public PortControl()
         {
             if (port is null)
@@ -135,6 +137,8 @@ namespace Harbor.Model
                 OnPropertyChanged();
             }
         }
+
+        public int Size => port.Size;
 
         public void AddBoat(Boat boat)
         {
@@ -320,6 +324,8 @@ namespace Harbor.Model
             OnPropertyChanged(nameof(FreeSpots));
             OnPropertyChanged(nameof(FreePercentage));
             OnPropertyChanged(nameof(Berths));
+            OnPropertyChanged(nameof(TotalWeight));
+            OnPropertyChanged(nameof(AverageSpeed));
         }
 
         /// <summary>

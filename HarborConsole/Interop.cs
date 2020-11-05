@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
+using System.IO;
 
 namespace Harbor.Console
 {
@@ -19,6 +20,19 @@ namespace Harbor.Console
             uint flags = GetOuputMode(handle);
             flags |= vtFlags;
             SetOutputMode(handle, flags);
+        }
+
+        public static void HideConsole() => FreeConsole();
+
+        public static void ShowConsole()
+        {
+            AllocConsole();
+            TextWriter writer = new StreamWriter(System.Console.OpenStandardOutput()) { AutoFlush = true };
+            TextWriter error = new StreamWriter(System.Console.OpenStandardError()) {AutoFlush = true};
+            TextReader reader = new StreamReader(System.Console.OpenStandardInput());
+            System.Console.SetOut(writer);
+            System.Console.SetError(error);
+            System.Console.SetIn(reader);
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -52,5 +66,14 @@ namespace Harbor.Console
         {
             if (!SetConsoleMode(handle, flags)) throw new Win32Exception();
         }
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool FreeConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool AttachConsole([In] int dwProcessId);
     }
 }

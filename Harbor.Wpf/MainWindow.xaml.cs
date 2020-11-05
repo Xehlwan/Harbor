@@ -17,6 +17,9 @@ namespace Harbor.Wpf
             portControl = control;
             DataContext = portControl;
             InitializeComponent();
+
+            Closed += (o, e) => portControl.StopLogChecker();
+            Closed += (o, e) => portControl.StopSimulation();
         }
 
         
@@ -55,12 +58,12 @@ namespace Harbor.Wpf
         {
             if (portControl is null) return;
 
-            if ((AutoSwitchOn.IsChecked ?? false) && !portControl.IsSimulating)
+            if ((AutoSwitchOn?.IsChecked ?? false) && !portControl.IsSimulating)
             {
                 SetInteractive(false);
                 portControl.StartSimulation();
             }
-            else if ((AutoSwitchOff.IsChecked ?? false) && portControl.IsSimulating)
+            else if ((AutoSwitchOff?.IsChecked ?? false) && portControl.IsSimulating)
             {
                 portControl.StopSimulation();
                 SetInteractive(true);
@@ -70,11 +73,11 @@ namespace Harbor.Wpf
         private void ToggleLogChecker_OnChecked(object sender, RoutedEventArgs e)
         {
             if (portControl is null) return;
-            if ((LogSwitchOn.IsChecked ?? false) && !portControl.IsLogCheckerRunning)
+            if ((LogSwitchOn?.IsChecked ?? false) && !portControl.IsLogCheckerRunning)
             {
                 portControl.StartLogChecker();
             }
-            else if ((LogSwitchOff.IsChecked ?? false) && portControl.IsLogCheckerRunning)
+            else if ((LogSwitchOff?.IsChecked ?? false) && portControl.IsLogCheckerRunning)
             {
                 portControl.StopLogChecker();
             }
