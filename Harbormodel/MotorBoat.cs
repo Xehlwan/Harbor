@@ -1,4 +1,6 @@
-﻿namespace Marina.Model
+﻿using System;
+
+namespace Harbor.Model
 {
     public class MotorBoat : Boat
     {
@@ -12,14 +14,25 @@
             HorsePower = ValidateInput(horsePower, CharacteristicLimits);
         }
 
+        public MotorBoat(BoatData boatData) : base(boatData)
+        {
+            if (boatData.Prefix != CodePrefix) throw new InvalidCastException("The prefix doesn't match this type.");
+            HorsePower = boatData.Characteristic;
+        }
+
         /// <inheritdoc cref="Boat.CharacteristicLimits" />
         public new static (int min, int max) CharacteristicLimits => (10, 1000);
+
+        public static char CodePrefix { get; } = 'M';
 
         /// <inheritdoc cref="Boat.SpeedLimits" />
         public new static (int min, int max) SpeedLimits => (1, 60);
 
         /// <inheritdoc cref="Boat.WeightLimits" />
         public new static (int min, int max) WeightLimits => (200, 3000);
+
+        /// <inheritdoc />
+        public override string TypeName { get; } = "Motor Boat";
 
         /// <inheritdoc />
         public override double BerthSpace { get; } = 1;
@@ -36,6 +49,6 @@
         public int HorsePower { get; }
 
         /// <inheritdoc />
-        protected override char Prefix { get; } = 'M';
+        protected override char Prefix => CodePrefix;
     }
 }

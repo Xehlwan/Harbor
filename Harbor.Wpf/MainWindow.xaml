@@ -1,0 +1,130 @@
+﻿<Window x:Class="Harbor.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:src="clr-namespace:Harbor.Wpf"
+        xmlns:m="clr-namespace:Harbor.Model;assembly=Harbor.Model"
+        Title="Harbor" Height="600" Width="800">
+    <Window.Resources>
+        <src:KnotConverter x:Key="KnotConverter"></src:KnotConverter>
+    </Window.Resources>
+    <Grid UseLayoutRounding="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <StatusBar Height="auto" VerticalAlignment="Bottom" UseLayoutRounding="True" Grid.Row="2" Grid.ColumnSpan="2">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <Button Background="{x:Null}" BorderBrush="{x:Null}" Click="OpenTurnedAway_OnClick">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Text="Turned Away: "></TextBlock>
+                        <TextBlock MinWidth="40" Text="{Binding Path=(m:PortControl.TurnedAwayTotal)}"></TextBlock>
+                    </StackPanel>
+                </Button>
+            </StatusBarItem>
+            <Separator Grid.Column="1" />
+            <StatusBarItem Grid.Column="2">
+                <Button Background="{x:Null}" BorderBrush="{x:Null}" Click="LeftToday_Click">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Text="Left Today: " />
+                        <TextBlock MinWidth="25" Text="{Binding Path=(m:PortControl.BoatsLeftCount)}" />
+                    </StackPanel>
+                </Button>
+            </StatusBarItem>
+            <Separator Grid.Column="3" />
+            <StatusBarItem x:Name="StatusLogItem" Grid.Column="4">
+                <Button Background="{x:Null}" BorderBrush="{x:Null}"
+                        Width="{Binding ActualWidth, ElementName=StatusLogItem, Mode=OneWay}"
+                        HorizontalContentAlignment="Left" Click="ShowLog_Click">
+                    <TextBlock Name="LogTicker" Text="{Binding Path=(m:PortControl.LogLastLine)}" />
+                </Button>
+            </StatusBarItem>
+            <Separator Grid.Column="5" />
+            <StatusBarItem Grid.Column="6">
+                <ProgressBar Width="100"
+                             Height="16"
+                             Minimum="0"
+                             Maximum="1"
+                             Value="{Binding Mode=OneWay, Path=(m:PortControl.FreePercentage)}" />
+            </StatusBarItem>
+        </StatusBar>
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0" Margin="10,5,0,5">
+            <TextBlock Text="Date: "/>
+            <TextBlock Name="CurrentDate" Text="{Binding Path=(m:PortControl.Today)}"/>
+            <Button Name="NextDayButton" Margin="5,0" Padding="4,2" Click="NextDayButton_OnClick">Next Day</Button>
+            <Separator Margin="10,0"></Separator>
+            <TextBlock Text="In Port: "></TextBlock>
+            <TextBlock Text="{Binding Path=(m:PortControl.BoatsInPort)}" />
+            <Separator Margin="10,0"></Separator>
+            <TextBlock Text="Total Weight: "></TextBlock>
+            <TextBlock Text="{Binding Path=(m:PortControl.TotalWeight)}"></TextBlock>
+            <TextBlock>kg</TextBlock>
+            <Separator Margin="10,0"></Separator>
+            <TextBlock Text="Average Speed: "></TextBlock>
+            <TextBlock Text="{Binding Path=(m:PortControl.AverageSpeed), Converter={StaticResource KnotConverter}}"></TextBlock>
+            <TextBlock Text="km/h"></TextBlock>
+            <Separator Margin="10,0"></Separator>
+        </StackPanel>
+        <DataGrid Name="PortData" Grid.Column="0" Grid.Row="0" Margin="10, 0, 0, 0" 
+                  AutoGenerateColumns="False" 
+                  ItemsSource="{Binding Mode=OneWay, Path=(m:PortControl.Berths)}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Dock" Binding="{Binding DockIndex}" />
+                <DataGridTextColumn Header="Berth" Binding="{Binding BerthIndex}"/>
+                <DataGridTextColumn Header="ID" Binding="{Binding Boat.IdentityCode}" />
+                <DataGridTextColumn Header="Type" Binding="{Binding Boat.TypeName}" />
+                <DataGridTextColumn Header="Size" Binding="{Binding Boat.BerthSpace}" />
+                <DataGridTextColumn Header="Top Speed" Binding="{Binding Boat.TopSpeed, Converter={StaticResource KnotConverter}}" />
+                <DataGridTextColumn Header="Weight" Binding="{Binding Boat.Weight}" />
+                <DataGridTextColumn Header="Unique" Binding="{Binding Boat.Characteristic}" />
+                <DataGridTextColumn Header="Unique Value" Binding="{Binding Boat.CharacteristicValue}" />
+                <DataGridTextColumn Header="Days in port" Binding="{Binding BerthedFor}"/>
+                <DataGridTextColumn Header="Leaves in" Binding="{Binding TimeLeft}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="10, 10, 10, 0">
+            <StackPanel>
+                <Label Name="AutomationLabel">Automation</Label>
+                <RadioButton GroupName="AutomationSwitch" Name="AutoSwitchOn" Checked="ToggleAutomation_OnChecked">On</RadioButton>
+                <RadioButton GroupName="AutomationSwitch" Name="AutoSwitchOff" IsChecked="True" Checked="ToggleAutomation_OnChecked">Off</RadioButton>
+            </StackPanel>
+            <Separator></Separator>
+            <WrapPanel>
+                <Label Height="24">Boats/day:</Label>
+                <TextBox Name="BoatsPerDayInput" Width="20" Height="18" Text="{Binding Path=(m:PortControl.AutoBoatsPerDay) }" />
+            </WrapPanel>
+            <StackPanel UseLayoutRounding="True">
+                <Label Name="LogLabel">Log Ticker</Label>
+                <RadioButton GroupName="LogSwitch" Name="LogSwitchOn" Checked="ToggleLogChecker_OnChecked" IsChecked="True">On</RadioButton>
+                <RadioButton GroupName="LogSwitch" Name="LogSwitchOff" Checked="ToggleLogChecker_OnChecked">Off</RadioButton>
+            </StackPanel>
+            <Separator></Separator>
+            <Button Name="RandomButton" Padding="4,2" Margin="0,5" Click="AddRandom_Click">Add Random</Button>
+            <Button Name="SaveDataButton" Padding="4,2" Margin="0,5" Click="SaveDataButton_OnClick">Save Data</Button>
+            <Button Name="LoadDataButton" Padding="4,2" Margin="0,5" Click="LoadDataButton_OnClick">Load Data</Button>
+            <Button Name="ResetHarborButton" Padding="4,2" Margin="0,5" Click="ResetHarborButton_OnClick">Reset Harbor</Button>
+            <Separator></Separator>
+            <Button x:Name="AddButton" Click="AddButton_OnClick" Margin="0,10,0,5"  Padding="4,2" Content="Add Boat"/>
+            <Button x:Name="RemoveButton" Click="RemoveButton_Click" Margin="0,5" Padding="4,2" Content="Remove Selected"/>
+        </StackPanel>
+    </Grid>
+</Window>

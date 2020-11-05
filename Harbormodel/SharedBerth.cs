@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Marina.Model
+namespace Harbor.Model
 {
     internal class SharedBerth : IBerth
     {
@@ -11,33 +11,35 @@ namespace Marina.Model
         public SharedBerth(Boat boat)
         {
             spots.Add((boat, 0));
+            FreeSpace = 1.0 - boat.BerthSpace;
         }
 
         /// <inheritdoc />
         public double FreeSpace { get; private set; }
 
         /// <inheritdoc />
+        public IEnumerable<(Boat boat, int berthTime)> Occupancy => spots.AsEnumerable();
+
+        /// <inheritdoc />
         public int Size => 1;
 
         /// <inheritdoc />
-        public IBerth AddBoat(Boat boat)
+        public IBerth AddBoat(Boat boat, int berthedFor)
         {
             if (FreeSpace < boat.BerthSpace) throw new InvalidOperationException("Not enough space to add boat.");
-            spots.Add((boat, 0));
+            spots.Add((boat, berthedFor));
+            FreeSpace -= boat.BerthSpace;
 
             return this;
         }
-
-        /// <inheritdoc />
-        public IEnumerable<(Boat boat, int berthTime)> Occupancy => spots.AsEnumerable();
 
         /// <inheritdoc />
         public void IncrementTime()
         {
             for (var i = 0; i < spots.Count; i++)
             {
-                (Boat boat, int berthedFor) spot = spots[i];
-                spots[i] = (spot.boat, spot.berthedFor + 1);
+                (Boat boat, int berthedFor) = spots[i];
+                spots[i] = (boat, berthedFor + 1);
             }
         }
 

@@ -1,38 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Marina.Model
+namespace Harbor.Model
 {
     public class Berth : IBerth
     {
         private readonly Boat boat;
         private int berthedFor;
 
-        public Berth(Boat boat)
+        public Berth(Boat boat, int berthedFor = 0)
         {
             this.boat = boat;
-            berthedFor = 0;
+            this.berthedFor = berthedFor;
         }
 
         /// <inheritdoc />
         public double FreeSpace => 0;
 
         /// <inheritdoc />
-        public int Size => (int) Math.Ceiling(boat.BerthSpace);
-
-        /// <inheritdoc />
-        public IBerth AddBoat(Boat boat)
+        public IEnumerable<(Boat boat, int berthTime)> Occupancy
         {
-            throw new InvalidOperationException("No free space to add boat.");
+            get { yield return (boat, berthedFor); }
         }
 
         /// <inheritdoc />
-        public IEnumerable<(Boat boat, int berthTime)> Occupancy
+        public int Size => (int) Math.Ceiling(boat.BerthSpace);
+
+        /// <exception cref="InvalidOperationException">Always thrown for this method on <see cref="Berth" />.</exception>
+        /// <inheritdoc />
+        public IBerth AddBoat(Boat boat, int berthedFor)
         {
-            get
-            {
-                yield return (boat, berthedFor);
-            }
+            throw new InvalidOperationException("No free space to add boat.");
         }
 
         /// <inheritdoc />

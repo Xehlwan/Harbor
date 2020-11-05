@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Globalization;
 
-namespace Marina.Model
+namespace Harbor.Model
 {
     /// <summary>
     /// The abstract base-class for all types of boats seeking mooring.
@@ -21,6 +20,17 @@ namespace Marina.Model
             TopSpeed = topSpeed;
             RegenerateCode();
         }
+
+        protected Boat(BoatData boatData)
+        {
+            Weight = boatData.Weight;
+            TopSpeed = boatData.TopSpeed;
+            Code = boatData.Code;
+        }
+        /// <summary>
+        /// The name for this type of boat.
+        /// </summary>
+        public abstract string TypeName { get; }
 
         /// <summary>
         /// The limits to the unique characteristics for this boat-type. Defaults to unlimited positive values.
@@ -79,6 +89,36 @@ namespace Marina.Model
 
         private string Code { get; set; }
 
+        public static Boat FromData(BoatData boatData)
+        {
+            var type = Type.GetType(boatData.Type);
+
+            if (type is null) return null;
+
+            return (Boat) Activator.CreateInstance(type, boatData);
+        }
+
+        public BoatData AsData()
+        {
+            var data = new BoatData
+            {
+                Type = GetType().FullName,
+                Prefix = Prefix,
+                Code = Code,
+                TopSpeed = TopSpeed,
+                Weight = Weight,
+                Characteristic = CharacteristicValue
+            };
+
+            return data;
+        }
+
+        /// <inheritdoc />
+        public int CompareTo(Boat other)
+        {
+            return string.Compare(IdentityCode, other.IdentityCode, StringComparison.OrdinalIgnoreCase);
+        }
+
         /// <summary>
         /// Regenerate the unique 3-letter identifier for this boat.
         /// </summary>
@@ -101,9 +141,5 @@ namespace Marina.Model
 
             return arg;
         }
-
-        /// <inheritdoc />
-        public int CompareTo(Boat other) =>
-            string.Compare(IdentityCode, other.IdentityCode, StringComparison.OrdinalIgnoreCase);
     }
 }
